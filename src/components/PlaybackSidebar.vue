@@ -2,18 +2,18 @@
 <template>
   <div>
     <!-- hahahha -->
-    <InstrumentControl @changeInstrument="changeInstrument"></InstrumentControl>
+    <BmpSlider @changeInstrument="changeInstrument"></BmpSlider>
   </div>
 </template>
 
 <script>
-import InstrumentControl from "./InstrumentControl";
+import BmpSlider from "./BmpSlider";
 export default {
   props: {
     playbackEngine: Object
   },
   components: {
-    InstrumentControl
+    BmpSlider
   },
   data() {
     return {};

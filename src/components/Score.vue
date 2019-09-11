@@ -12,7 +12,8 @@ export default {
   data() {
     return {
       osmd: null,
-      scoreLoading: false
+      scoreLoading: false,
+      zoom: 1.0
     };
   },
   watch: {
@@ -35,8 +36,31 @@ export default {
       await this.osmd.load(scoreXml.data);
       this.scoreLoading = false;
       await this.$nextTick();
+
+      this.osmd.setOptions({
+        defaultColorRest: "#AAAAAA",
+        drawSubtitle: false
+      });
       await this.osmd.render();
       this.$emit("scoreLoaded");
+    },
+    handleZoomIn() {
+      var that = this;
+      this.zoom = this.zoom / 1.2;
+      window.setTimeout(function() {
+        that.osmd.zoom = that.zoom;
+        that.osmd.render();
+        that.$emit("zoom", that.zoom);
+      }, 0);
+    },
+    handleZoomOut() {
+      var that = this;
+      this.zoom = this.zoom * 1.2;
+      window.setTimeout(function() {
+        that.osmd.zoom = that.zoom;
+        that.osmd.render();
+        that.$emit("zoom", that.zoom);
+      }, 0);
     }
   }
 };

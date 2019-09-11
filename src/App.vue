@@ -6,15 +6,47 @@
           <img class="person" src="./assets/person.jpg" alt />
           <PlaybackSidebar :playbackEngine="pbEngine" />
 
-          <h2>每分钟节拍数（BPM） {{pbEngine.denominator ? `(1/${pbEngine.denominator})` : ''}}</h2>
-          <el-slider v-model="currentDenominator"></el-slider>
+          <h2
+            class="score-control-title"
+          >移调 {{pbEngine.denominator ? `(1/${pbEngine.denominator})` : ''}}</h2>
+          <el-slider v-model="currentDenominator" :disabled="bpmDisabled"></el-slider>
 
-          <h2>音量设置（Levels）</h2>
+          <h2 class="score-control-title">音轨</h2>
+          <div v-for="instrument in instrumentLevels" :key="instrument.id">
+            <span>{{translateZH(instrument.name)}}</span>
+            <div v-for="(voice, index) in instrument.voices" :key="index">
+              <el-slider v-model="voice.volume"></el-slider>
+            </div>
+          </div>
+
+          <h2 class="score-control-title">缩放 {{Math.floor(zoom * 100.0) + "%"}}</h2>
+          <div class="ui buttons">
+            <el-button @click="handleZoomIn">缩小</el-button>
+            <el-button @click="handleZoomOut">放大</el-button>
+          </div>
+
+          <h2 class="score-control-title">光标</h2>
+          <div class="ui buttons">
+            <el-button @click="handleShowCursor">显示</el-button>
+            <el-button @click="handleHideCursor">隐藏</el-button>
+            <el-button @click="handleNextCursor">下一个</el-button>
+            <el-button @click="handleResetCursor">重置</el-button>
+          </div>
         </div>
 
-        <el-main>
-          <Score @osmdInit="osmdInit" @scoreLoaded="scoreLoaded" :score="selectedScore" />
-          <PlaybackControls :playbackEngine="pbEngine" :scoreTitle="scoreTitle" />
+        <el-main style="position:relative;">
+          <Score
+            ref="score"
+            @osmdInit="osmdInit"
+            @scoreLoaded="scoreLoaded"
+            @zoom="scoreZoom"
+            :score="selectedScore"
+          />
+          <PlaybackControls
+            :playbackEngine="pbEngine"
+            :scoreTitle="scoreTitle"
+            @control="handleControl"
+          />
         </el-main>
       </el-container>
     </el-container>
@@ -39,15 +71,24 @@ export default {
       pbEngine: new PlaybackEngine(),
       scoreTitle: "",
       selectedScore: null,
-      currentDenominator: 0
+      currentDenominator: 0,
+      zoom: 1.0
     };
+  },
+  computed: {
+    instrumentLevels() {
+      return this.pbEngine.playbackSettings.volumes.instruments;
+    },
+    bpmDisabled() {
+      return this.pbEngine.state === "PLAYING";
+    }
   },
   methods: {
     osmdInit(osmd) {
       console.log("OSMD init");
       this.osmd = osmd;
       this.selectedScore =
-        "http://localhost:8081/musicXML/MuzioClementi_SonatinaOpus36No1_Part1.xml";
+        "http://localhost:8089/musicXML/MuzioClementi_SonatinaOpus36No1_Part1.xml";
     },
     scoreLoaded() {
       console.log("Score loaded");
@@ -57,6 +98,72 @@ export default {
     scoreChanged(scoreUrl) {
       if (this.pbEngine.state === "PLAYING") this.pbEngine.stop();
       this.selectedScore = scoreUrl;
+    },
+    handleZoomIn() {
+      this.$refs.score.handleZoomIn();
+    },
+    handleZoomOut() {
+      this.$refs.score.handleZoomOut();
+    },
+    handleShowCursor() {
+      if (this.pbEngine.cursor) {
+        this.pbEngine.cursor.show();
+        this.pbEngine.cursor.updateStyle(200, "red"); // 光标风格
+      } else {
+        console.info(
+          "无法显示光标，因为它已被禁用（例如通过DrawingParameters）."
+        );
+      }
+    },
+    handleHideCursor() {
+      this.pbEngine.cursor.hide();
+    },
+    handleNextCursor() {
+      this.pbEngine.cursor.next();
+    },
+    handleResetCursor() {
+      this.pbEngine.cursor.reset();
+    },
+    scoreZoom(zoom) {
+      this.zoom = zoom;
+    },
+    handlePlay(state) {
+      if (state) {
+        this.pbEngine.play();
+      }
+    },
+    handleControl(state) {
+      if (state) {
+        switch (state) {
+          case "play":
+            this.pbEngine.play();
+            break;
+          case "pause":
+            this.pbEngine.pause();
+            break;
+          case "stop":
+            this.pbEngine.stop();
+            break;
+
+          default:
+            break;
+        }
+      }
+    },
+    translateZH(str) {
+      var text = "";
+      switch (str) {
+        case "Piano (left)":
+          text = "音轨(左)";
+          break;
+        case "Piano (right)":
+          text = "音轨(右)";
+          break;
+
+        default:
+          break;
+      }
+      return text;
     }
   }
 };
@@ -66,13 +173,17 @@ export default {
 body {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  line-height: 1;
   text-align: center;
   color: #2c3e50;
+  box-sizing: border-box;
 }
 
 .el-header,
@@ -87,7 +198,7 @@ body {
   background-color: #d3dce6;
   color: #333;
   text-align: center;
-  line-height: 200px;
+  line-height: 240px;
 }
 
 .el-main {
@@ -105,7 +216,9 @@ body > .el-container {
   display: block;
   width: 200px;
   height: 200px;
+  margin-bottom: 10px;
 }
-.navSide {
+.score-control-title {
+  font-size: 16px;
 }
 </style>

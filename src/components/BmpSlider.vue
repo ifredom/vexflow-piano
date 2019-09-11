@@ -50,3 +50,9 @@ export default {
   }
 };
 </script>
+
+<style  scoped>
+.el-dropdown-link {
+  font-size: 16px;
+}
+</style>
