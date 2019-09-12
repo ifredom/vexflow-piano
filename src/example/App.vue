@@ -64,6 +64,7 @@
 <script>
 import Score from "./components/Score.vue";
 import PlaybackEngine from "./pbEngine/PlaybackEngine"; // self def
+// import PlaybackEngine from "./osmd/PlaybackEngine";
 import PlaybackControls from "./components/PlaybackControls.vue";
 import PlaybackSidebar from "./components/PlaybackSidebar.vue";
 export default {

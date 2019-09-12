@@ -121,7 +121,7 @@ export default class PlaybackEngine {
 
   jumpToStep(step) {
     this.pause();
-    console.log("Jump to step " + step);
+    console.log("Jump form " + this.currentIterationStep + "to step " + step, );
     if (this.currentIterationStep > step) {
       this.cursor.hide();
       this.cursor.reset();
