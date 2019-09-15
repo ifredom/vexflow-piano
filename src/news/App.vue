@@ -12,21 +12,24 @@
             <el-radio label="svg">Svg</el-radio>
           </el-radio-group>
 
-          <h2
-            class="score-control-title"
-          >移调 {{pbEngine.denominator ? `(1/${pbEngine.denominator})` : ''}}</h2>
-          <el-slider v-model="currentDenominator"></el-slider>
-          <!-- <el-slider v-model="currentDenominator" :disabled="bpmDisabled"></el-slider> -->
+          <h2 class="score-control-title">
+            <span>移调</span>
+            <span v-text="denominator ? `(1/${denominator})` : ''"></span>
+          </h2>
+          <el-slider v-model="currentDenominator" :disabled="bpmDisabled"></el-slider>
 
           <h2 class="score-control-title">音轨</h2>
           <div v-for="instrument in instrumentLevels" :key="instrument.id">
-            <span>{{translateZH(instrument.name)}}</span>
+            <span v-texxt="translateZH(instrument.name)"></span>
             <div v-for="(voice, index) in instrument.voices" :key="index">
               <el-slider v-model="voice.volume"></el-slider>
             </div>
           </div>
 
-          <h2 class="score-control-title">缩放 {{Math.floor(vexOptions.zoom * 100.0) + "%"}}</h2>
+          <h2 class="score-control-title">
+            <span>缩放</span>
+            <span v-text="Math.floor(vexOptions.zoom * 100.0) + '%'"></span>
+          </h2>
           <div class="ui buttons">
             <el-button @click="handleZoomIn">缩小</el-button>
             <el-button @click="handleZoomOut">放大</el-button>
@@ -48,12 +51,14 @@
             @scoreLoaded="scoreLoaded"
             @zoom="scoreZoom"
             :score="selectedScore"
+            :backend="vexOptions.backend"
           />
           <PlaybackControls
             :playbackEngine="pbEngine"
             :scoreTitle="scoreTitle"
             @control="handleControl"
             @jumpToStep="handleJumpToStep"
+            :score="selectedScore"
           />
         </el-main>
       </el-container>
@@ -64,7 +69,7 @@
 
 <script>
 import Score from "./components/Score.vue";
-import PlaybackEngine from "./osmd/PlaybackEngine";
+import PlaybackEngine from "./pbEngine/PlaybackEngine"; // self def
 import PlaybackControls from "./components/PlaybackControls.vue";
 import PlaybackSidebar from "./components/PlaybackSidebar.vue";
 export default {
@@ -76,7 +81,7 @@ export default {
   },
   data() {
     return {
-      pbEngine: new PlaybackEngine(),
+      pbEngine: {},
       scoreTitle: "",
       selectedScore: null,
       currentDenominator: 0,
@@ -92,7 +97,14 @@ export default {
     },
     bpmDisabled() {
       return this.pbEngine.state === "PLAYING";
+    },
+    denominator() {
+      return this.pbEngine.denominator;
     }
+  },
+  created() {
+    this.pbEngine = new PlaybackEngine();
+    this._createNewOsmd = true; // 是否已经渲染出score
   },
   methods: {
     osmdInit(osmd) {
@@ -111,8 +123,8 @@ export default {
       this.selectedScore = scoreUrl;
     },
     changeBackend(val) {
-      console.log(val);
-      this.pbEngine;
+      print(val);
+      this.vexOptions.backend = val;
     },
     handleZoomIn() {
       this.$refs.score.handleZoomIn();
