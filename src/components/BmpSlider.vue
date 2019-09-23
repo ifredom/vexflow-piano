@@ -4,10 +4,10 @@
       <span class="el-dropdown-link">选择乐器</span>
       <el-select v-model="value" placeholder="请选择" @change="changeInstrument">
         <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          v-for="item in instruments"
+          :key="item"
+          :label="item"
+          :value="item"
         ></el-option>
       </el-select>
     </div>

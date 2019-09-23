@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     changeInstrument(val) {
-      console.log(val);
+      this.$emit("changeInstrument", val);
     }
   }
 };

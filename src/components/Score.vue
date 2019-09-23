@@ -6,9 +6,9 @@
 
 <script>
 import axios from "axios";
-import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
+import { OpenSheetMusicDisplay, AJAX } from "opensheetmusicdisplay";
 export default {
-  props: ["score"],
+  props: ["score", "backend", "instrument"],
   data() {
     return {
       osmd: null,
@@ -18,18 +18,86 @@ export default {
   },
   watch: {
     score(val, oldVal) {
+      console.log("score");
+
       if (!val || val === oldVal) return;
-      this.loadScore(val);
+      this.reRender(val);
+    },
+    instrument(val, oldVal) {
+      console.log("instrument");
+
+      if (!val || val === oldVal) return;
+      this.reRenderInstrument(val);
+    },
+    backend(val, oldVal) {
+      console.log(val, oldVal);
+      if (!val || val === oldVal) return;
+      this.reRender(val);
     }
   },
-  async mounted() {
+  mounted() {
     this.osmd = new OpenSheetMusicDisplay(
       document.getElementById("osmd-score")
     );
-    this.$emit("osmdInit", this.osmd);
-    if (this.score) this.loadScore(this.score);
+
+    // this.$emit("osmdInit", this.osmd);
+    // if (this.score) this.loadScore(this.score);
   },
   methods: {
+    async reRenderInstrument(val) {
+      var that = this;
+      console.log(val);
+      var scoreUrl =
+        "http://localhost:8089/musicXML/MuzioClementi_SonatinaOpus36No1_Part1.xml";
+      this.scoreLoading = true;
+
+      // let scoreXml = await axios.get(scoreUrl);
+
+      // await this.osmd.load(scoreXml.data);
+      // this.scoreLoading = false;
+      // await this.$nextTick();
+
+      AJAX.ajax(scoreUrl)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log("err", err);
+        });
+
+      // 在初始化osmd时，配置的参数无效
+      this.osmd.setOptions({
+        fingeringPosition: "above",
+        fingeringInsideStafflines: "true",
+        disableCursor: true,
+        drawComposer: false,
+        drawFingerings: true,
+
+        fingeringInsideStafflines: "true", // default: false. true draws fingerings directly above/below notes
+        setWantedStemDirectionByXml: true, // try false, which was previously the default behavior
+        // drawUpToMeasureNumber: 3, // draws only up to measure 3, meaning it draws measure 1 to 3 of the piece.
+        // coloring options
+        coloringEnabled: true,
+        defaultColorNotehead: "#ffffff", // try setting a default color. default is black (undefined)
+        defaultColorStem: "#48D1CC",
+
+        autoBeam: true, // try true, OSMD Function Test AutoBeam sample
+        autoBeamOptions: {
+          beam_rests: true,
+          beam_middle_rests_only: false,
+          // groups: [[3, 4], [1, 1]],
+          maintain_stem_directions: false
+        }
+      });
+
+      await this.osmd.render();
+    },
+    reRender(backend) {
+      console.log(backend);
+      // this.osmd = new OpenSheetMusicDisplay(
+      //   document.getElementById("osmd-score")
+      // );
+    },
     async loadScore(scoreUrl) {
       this.scoreLoading = true;
       let scoreXml = await axios.get(scoreUrl);

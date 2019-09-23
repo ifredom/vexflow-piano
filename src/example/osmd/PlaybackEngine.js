@@ -119,6 +119,7 @@ export default class PlaybackEngine {
     this.ac.resume();
   }
 
+
   jumpToStep(step) {
     this.pause();
     console.log("Jump form " + this.currentIterationStep + "to step " + step, );

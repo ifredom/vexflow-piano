@@ -47,6 +47,7 @@
             @scoreLoaded="scoreLoaded"
             @zoom="scoreZoom"
             :score="selectedScore"
+            :instrument="selectedInstrument"
           />
           <PlaybackControls
             :playbackEngine="pbEngine"

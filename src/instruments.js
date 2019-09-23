@@ -1,5 +1,5 @@
 export default [
-  "手风琴",
+  "accordion",
   "acoustic_bass",
   "acoustic_grand_piano",
   "acoustic_guitar_nylon",
