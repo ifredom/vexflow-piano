@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <button class="mute">Mute button</button>
+    </div>
+    <script>
+      var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var gainNode = audioCtx.createGain();
+      var mute = document.querySelector(".mute");
+      var source;
+
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia(
+          // constraints - only audio needed for this app
+          {
+            audio: true
+          },
+
+          // Success callback
+          function(stream) {
+            source = audioCtx.createMediaStreamSource(stream);
+          },
+
+          // Error callback
+          function(err) {
+            console.log("The following gUM error occured: " + err);
+          }
+        );
+      } else {
+        console.log("getUserMedia not supported on your browser!");
+      }
+
+      mute.onclick = voiceMute;
+
+      function voiceMute() {
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        if (mute.id == "") {
+          gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+          mute.id = "activated";
+          mute.innerHTML = "Unmute";
+        } else {
+          gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
+          mute.id = "";
+          mute.innerHTML = "Mute";
+        }
+      }
+    </script>
+  </body>
+</html>

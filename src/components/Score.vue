@@ -18,10 +18,9 @@ export default {
   },
   watch: {
     score(val, oldVal) {
-      console.log("score");
-
+      console.log("watch score");
       if (!val || val === oldVal) return;
-      this.reRender(val);
+      this.loadScoreAndRender(val);
     },
     instrument(val, oldVal) {
       console.log("instrument");
@@ -32,7 +31,7 @@ export default {
     backend(val, oldVal) {
       console.log(val, oldVal);
       if (!val || val === oldVal) return;
-      this.reRender(val);
+      this.loadScoreAndRender(val);
     }
   },
   mounted() {
@@ -46,24 +45,13 @@ export default {
   methods: {
     async reRenderInstrument(val) {
       var that = this;
-      console.log(val);
       var scoreUrl =
         "http://localhost:8089/musicXML/MuzioClementi_SonatinaOpus36No1_Part1.xml";
       this.scoreLoading = true;
 
-      // let scoreXml = await axios.get(scoreUrl);
-
       // await this.osmd.load(scoreXml.data);
       // this.scoreLoading = false;
       // await this.$nextTick();
-
-      AJAX.ajax(scoreUrl)
-        .then(res => {
-          console.log(res);
-        })
-        .catch(err => {
-          console.log("err", err);
-        });
 
       // 在初始化osmd时，配置的参数无效
       this.osmd.setOptions({
@@ -92,11 +80,21 @@ export default {
 
       await this.osmd.render();
     },
-    reRender(backend) {
-      console.log(backend);
-      // this.osmd = new OpenSheetMusicDisplay(
-      //   document.getElementById("osmd-score")
-      // );
+    async loadScoreAndRender(scoreUrl) {
+      var localScoreUrl = `musicXML/${scoreUrl}`;
+      console.log(localScoreUrl);
+
+      this.osmd.clear();
+
+      this.scoreLoading = true;
+      let scoreXml = await axios.get(localScoreUrl);
+
+      await this.osmd.load(scoreXml.data);
+      this.scoreLoading = false;
+      await this.$nextTick();
+
+      await this.osmd.render();
+      this.$emit("scoreLoaded");
     },
     async loadScore(scoreUrl) {
       this.scoreLoading = true;
