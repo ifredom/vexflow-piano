@@ -39,6 +39,9 @@
         var AudioContext = window.AudioContext || window.webkitAudioContext;
         var audioCtx = new AudioContext();
 
+        var audioCurrentTime = audioCtx.currentTime;
+        console.log(audioCurrentTime);
+
         // create Oscillator and gain node
         var oscillator = audioCtx.createOscillator();
         var gainNode = audioCtx.createGain();
@@ -85,6 +88,8 @@
         function updatePage(e) {
           KeyFlag = false;
 
+          console.log(audioCurrentTime);
+
           CurX = window.Event
             ? e.pageX
             : event.clientX +
@@ -100,6 +105,8 @@
 
           oscillator.frequency.value = (CurX / WIDTH) * maxFreq;
           gainNode.gain.value = (CurY / HEIGHT) * maxVol;
+
+          console.log(CurX);
 
           canvasDraw();
         }

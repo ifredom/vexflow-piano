@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>测试currentTime Api</title>
+    <style>
+      #wrapper {
+        position: relative;
+        width: 200px;
+        height: 20px;
+        border: 1px solid darkgray;
+      }
+      /*将滑块和填充块设置成inline-block,保证他们在同一行内*/
+      #slider {
+        position: absolute;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        background-color: #af58a8;
+        cursor: pointer;
+      }
+      #fill {
+        display: inline-block;
+        width: 0;
+        height: 20px;
+        background: #6caf00;
+      }
+    </style>
+  </head>
+  <body>
+    <!--外层容器-->
+    <div id="wrapper">
+      <!--填充块-->
+      <div id="fill"></div>
+      <!--滑块-->
+      <div id="slider"></div>
+    </div>
+
+    <select class="lists" id="octave">
+      <option value="100">EIGHTH NOTE</option>
+      <option value="150">QUARTER NOTE</option>
+      <option value="200">HALF NOTE</option>
+      <option value="250">WHOLE NOTE</option>
+    </select>
+
+    <div id="waveSelect">waveSelect</div>
+
+    <br />
+    <br />
+    sustain可选值
+    <select class="lists" id="sustain">
+      <option value="0.5">EIGHTH NOTE</option>
+      <option value="1.0">QUARTER NOTE</option>
+      <option value="2.0">HALF NOTE</option>
+      <option value="4.0">WHOLE NOTE</option>
+    </select>
+
+    <br />
+    <br />
+    基础值有 "sine", "square", "sawtooth", "triangle" and "custom".
+    默认值是"sine"。
+    <br />
+    <select class="lists" id="waveSelect">
+      <option value="sine">正弦</option>
+      <option value="square">方形</option>
+      <option value="sawtooth">锯齿波</option>
+      <option value="triangle">三角形</option>
+      <option value="custom">custom</option>
+    </select>
+
+    <button id="btn">点击</button>
+
+    <script>
+      var btn = document.getElementById("btn");
+
+      btn.addEventListener("click", function(e) {
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        var context = new AudioContext();
+        var oscillator = context.createOscillator();
+
+        //create volume controller
+        var gainNode = context.createGain();
+
+        //connect signal to audio output(speakers by default)
+        oscillator.connect(gainNode);
+        gainNode.connect(context.destination);
+
+        // adjusts frequency played by 50%, 100% or 200%
+        var octave = document.getElementById("octave").value;
+
+        var frequencies = 0.5;
+        // sets oscillator frequency
+        oscillator.frequency.value = frequencies * octave;
+
+        //oscillator wave type
+        oscillator.type = document.getElementById("waveSelect").value;
+
+        //starts oscillator. Delayed start can be achieved by adding time(in secs) after currentTime
+        oscillator.start(context.currentTime + 0.01);
+
+        // 设置node持续时间
+        var sustain = parseFloat(document.getElementById("sustain").value);
+
+        //stops oscillator by exponentially ramping down sound over .015 seconds to avoid audible click
+        // gainNode.gain.setTargetAtTime(0, context.currentTime + sustain, 0.0015);
+        gainNode.gain.setTargetAtTime(0, 3000, 0.0015);
+
+        //for testing
+        console.log(
+          "Hz:" +
+            frequencies * octave +
+            " octave:" +
+            octave +
+            " wave:" +
+            oscillator.type +
+            "duration: " +
+            sustain +
+            " time:" +
+            context.currentTime
+        );
+      });
+    </script>
+  </body>
+</html>

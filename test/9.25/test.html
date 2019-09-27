@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="btn">点击</div>
+    <script>
+      var btn = document.getElementById("btn");
+
+      btn.addEventListener("click", function() {
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        var audioCtx = new AudioContext();
+
+        var biquadFilter = audioCtx.createBiquadFilter();
+
+        biquadFilter.type = "lowshelf";
+        biquadFilter.frequency.value = 1000;
+        biquadFilter.gain.value = 25;
+        // function setupRoutingGraph() {
+        //   const context = new AudioContext();
+        //   // Create the low frequency oscillator that supplies the modulation signal
+        //   const lfo = context.createOscillator();
+        //   lfo.frequency.value = 1.0;
+        //   // Create the high frequency oscillator to be modulated
+        //   const hfo = context.createOscillator();
+        //   hfo.frequency.value = 440.0;
+        //   // Create a gain node whose gain determines the amplitude of the modulation signal
+        //   const modulationGain = context.createGain();
+        //   modulationGain.gain.value = 50;
+        //   // Configure the graph and start the oscillators
+        //   lfo.connect(modulationGain);
+        //   modulationGain.connect(hfo.detune);
+        //   hfo.connect(context.destination);
+        //   hfo.start(0);
+        //   lfo.start(0);
+        // }
+      });
+    </script>
+  </body>
+</html>

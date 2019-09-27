@@ -12,6 +12,7 @@
       <Score :score="selectedScore"></Score>
     </div>
     <div class="control-container">
+      <div @click="setVolume">音量</div>
       <PlaybackControls v-if="pbEngine" :playbackEngine="pbEngine" :scoreTitle="scoreTitle"></PlaybackControls>
     </div>
   </div>
@@ -19,9 +20,10 @@
 
 
 <script>
-import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
+import { OpenSheetMusicDisplay, Instrument } from "opensheetmusicdisplay";
 import PlaybackControls from "./components/PlaybackControls.vue";
 import Score from "@/components/Score";
+import instruments from "./instruments.js";
 export default {
   name: "app",
   components: { Score, PlaybackControls },
@@ -55,7 +57,25 @@ export default {
   created() {
     this._createNewOsmd = true; // 是否已经渲染出score
   },
-  methods: {}
+  methods: {
+    setVolume(num) {
+      var instrument = new Instrument();
+
+      console.log(instrument);
+
+      function setVoiceVolume(instrumentId, voiceId, volume) {
+        let playbackInstrument = instruments.find(i => i.id === instrumentId);
+        let playbackVoice = playbackInstrument.voices.find(
+          v => v.id === voiceId
+        );
+        playbackVoice.volume = volume;
+      }
+
+      // var instrument = "acoustic_grand_piano";
+      // Volume = 30;
+      // setVoiceVolume
+    }
+  }
 };
 </script>
 

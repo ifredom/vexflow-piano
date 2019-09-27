@@ -31,6 +31,9 @@
     <div id="resume" style="background-color: orange;margin: 20px;">
       resume 播放
     </div>
+    <div id="setTime" style="background-color: orange;margin: 20px;">
+      setTime 跳时
+    </div>
     <div
       id="mute"
       data-muted="false"
@@ -43,10 +46,13 @@
       var suspend = document.getElementById("suspend");
       var resume = document.getElementById("resume");
       var mute = document.getElementById("mute");
+      var setTime = document.getElementById("setTime");
 
       window.addEventListener("click", init);
 
       function init(params) {
+        console.log("init");
+
         // create web audio api context
         var AudioContext = window.AudioContext || window.webkitAudioContext;
         var audioCtx = new AudioContext();
@@ -66,7 +72,7 @@
         var HEIGHT = window.innerHeight;
 
         var maxFreq = 6000;
-        var maxVol = 0.02;
+        var maxVol = 100;
 
         var initialFreq = 3000;
         var initialVol = 0.001;
@@ -102,6 +108,12 @@
 
         resume.onclick = function(e) {
           audioCtx.resume();
+        };
+
+        setTime.onclick = function(e) {
+          console.log("setTime");
+
+          gainNode.gain.setTargetAtTime(0, 1000, 0.0015);
         };
 
         mute.onclick = function() {
@@ -158,6 +170,8 @@
 
           oscillator.frequency.value = (CurX / WIDTH) * maxFreq;
           gainNode.gain.value = (CurY / HEIGHT) * maxVol;
+
+          console.log(gainNode.gain.value);
         }
       }
     </script>
