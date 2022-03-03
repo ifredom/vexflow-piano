@@ -31,3 +31,9 @@ clef 谱号
 defaultColorNotehead 符头 bool
 
 drawUpToMeasureNumber 渲染小节数 number
+
+### 参考资料
+[VexFlow](https://github.com/0xfe/vexflow)
+[alphatab](https://www.alphatab.net/docs/showcase/introduction/)
+[opensheetmusicdisplay](https://github.com/opensheetmusicdisplay/opensheetmusicdisplay)
+
