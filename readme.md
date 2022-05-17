@@ -1,4 +1,6 @@
-# 本项目得目的是做一个使用musicxml渲染得交互式SDK(Purpose of the project：An interactive SDK rendered using musicxml)
+# 使用musicxml渲染乐谱的交互式SDK
+
+(Purpose of the project：An interactive SDK rendered using musicxml)
 
 project base with OpenSheetMusicDisplay ,功能介绍(Function introduction)：
 
