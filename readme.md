@@ -1,8 +1,10 @@
-# 目的：选择乐曲加载
+# 本项目得目的是做一个使用musicxml渲染得交互式SDK(Purpose of the project：An interactive SDK rendered using musicxml)
 
-1. 选择乐曲，渲染乐谱 （乐谱，带指法）,可以随时控制播放，暂停，调音等参数
-2. 接受 midi 信号，根据 midi 信号，移动光标
-3. 开启教案模式，截选乐谱.上传乐谱信息.
+project base with OpenSheetMusicDisplay ,功能介绍(Function introduction)：
+
+1. 选择乐曲，渲染乐谱,实时播放，暂停，调音（Select music, render music score, play in real time, pause and tune）
+2. 接收 midi 信号，根据 midi 信号实时移动光标（Receive the MIDI signal and move the cursor in real time according to the MIDI signal）
+3. 截选乐谱.上传乐谱信息（Cut the score Upload music score information）
 
 ## osmd 公共函数分类
 
@@ -14,23 +16,17 @@
 
 4. IOSMDOptions osmd 配置参数
 
-## OpenSheetMusicDisplay 文档
-
-Classes 直接继承 osmd 实例
-
-Ajax
-
-## 单词解释
-
-Accessors 访问器，访问函数
-
-clef 谱号
-
 ## OSMDOptions 配置参数 ： OpenSheetMusicDisplay/OSMDOptions.ts:9
 
 defaultColorNotehead 符头 bool
 
 drawUpToMeasureNumber 渲染小节数 number
+
+## 单词解释
+
+- Accessors 访问器，访问函数
+
+- clef 谱号
 
 ### 参考资料
 [VexFlow](https://github.com/0xfe/vexflow)
